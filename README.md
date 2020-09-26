@@ -36,7 +36,7 @@ docker container run -it --name monlab --volume $(pwd):/code thegaragebandofit:
 ```
 
 ```shell
-root@d8111c3f229c:/# aws configure
+root@d5129bd0f5a2:/# aws configure
 AWS Access Key ID [None]:     xxxxxx
 AWS Secret Access Key [None]: ******
 Default region name [None]:   eu-west-1
@@ -58,17 +58,14 @@ root@d5129bd0f5a2:/# aws s3 ls s3://lpiot-monsite
 Essayons de déposer un nouveau fichier dans ce _bucket_.
 
 ```shell
-root@d5129bd0f5a2:/code/resources# aws s3 cp error.html s3://lpiot-monsite/
+root@d5129bd0f5a2:/code/resources/# aws s3 cp error.html s3://lpiot-monsite/
 upload: ./error.html to s3://lpiot-monsite/error.html    
 ```
 
 Créons un nouveau _bucket_ `AWS S3` nommé `lpiot-test-7890`…
 
 ```shell
-root@d8111c3f229c:/# aws s3api help
-
-
-root@d8111c3f229c:/# aws s3api create-bucket --bucket lpiot-test-7890 --region us-east-1
+root@d5129bd0f5a2:/code/resources/# aws s3api create-bucket --bucket lpiot-test-7890 --region us-east-1
 {
     "Location": "/lpiot-test-7890"
     }
@@ -76,7 +73,7 @@ root@d8111c3f229c:/# aws s3api create-bucket --bucket lpiot-test-7890 --region u
 
 Tentons d'en voir les fichiers à travers des requêtes `HTTP`…
 ```shell
-root@d8111c3f229c:/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/error.html
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/error.html
 <html>
 <head><title>404 Not Found</title></head>
 <body>
@@ -97,12 +94,13 @@ Le _bucket_ n'est pas exposé en tant que site _Web_.
 Il faut le configurer pour cela.
 
 ```shell
-
+root@d5129bd0f5a2:/code/resources/# aws s3 website s3://lpiot-test-7890/ --index-document index.html --error-document error.html
+root@d5129bd0f5a2:/code/resources/# 
 ```
 
 On copie les fichiers dans le _bucket_…
 ```shell
-root@d5129bd0f5a2:/code/resources# aws s3 sync . s3://lpiot-test-7890/ --acl public-read
+root@d5129bd0f5a2:/code/resources/# aws s3 sync . s3://lpiot-test-7890/ --acl public-read
 upload: ./error.html to s3://lpiot-test-7890/error.html
 upload: ./test.txt to s3://lpiot-test-7890/test.txt
 upload: ./index.html to s3://lpiot-test-7890/index.html
@@ -112,7 +110,7 @@ Si on tente à nouveau de requêter…
 On a bien le résultat attendu.
 
 ```shell
-root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/index.html
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/index.html
 <html>
   <head>
     Content-Type: text/plain; charset=utf-8
@@ -125,7 +123,8 @@ root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-eas
 /_/ /_/_____/_____/_____/\____/     |__/|__/\____/_/ |_/_____/_____(_)   
   </body>
 </html>
-root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/error.html
+
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/error.html
 <html>
   <head>
     Content-Type: text/plain; charset=utf-8
@@ -138,7 +137,8 @@ root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-eas
 /_/   /_/  |_/_/ /_/  |_/_____/  /_____/_/ |_/_/ |_|\____/_/ |_|  
   </body>
 </html>
-root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
+
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
   _______________________
  /_  __/ ____/ ___/_  __/
   / / / __/  \__ \ / /   
@@ -150,14 +150,14 @@ root@d5129bd0f5a2:/code/resources# curl http://lpiot-test-7890.s3-website.us-eas
 Revoyons les ACL du fichier `test.txt`…
 
 ```shell
-root@d5129bd0f5a2:/code/resources# aws s3 cp s3://lpiot-test-7890/test.txt s3://lpiot-test-7890/test2.txt
+root@d5129bd0f5a2:/code/resources/# aws s3 cp s3://lpiot-test-7890/test.txt s3://lpiot-test-7890/test2.txt
 copy: s3://lpiot-test-7890/test.txt to s3://lpiot-test-7890/test2.txt
 ```
 
 Requêtons à nouveau nos fichiers…
 
 ```shell
-curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test2.txt
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test2.txt
 <html>
   <head>
     Content-Type: text/plain; charset=utf-8
@@ -170,7 +170,8 @@ curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test2.txt
 /_/   /_/  |_/_/ /_/  |_/_____/  /_____/_/ |_/_/ |_|\____/_/ |_|  
   </body>
 </html>
-curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
+
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
   _______________________
  /_  __/ ____/ ___/_  __/
   / / / __/  \__ \ / /   
@@ -178,8 +179,7 @@ curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
 /_/ /_____//____//_/     
 ```
 
-Le fichier `test2.txt` n'a pas hérité des ACL du fichier source !
-
+Le fichier `test2.txt` n'a pas hérité des _ACL_ du fichier source !
 
 
 1. Introduction à `Terraform`
