@@ -1,4 +1,13 @@
 # -----------------------------------------------------------------------------
+# variables
+# -----------------------------------------------------------------------------
+
+variable "static_files_in_bucket" {
+  description = "1- static files are uploaded into the S3 bucket. 0- static files are removed"
+  default     = 1
+}
+
+# -----------------------------------------------------------------------------
 # provider
 # -----------------------------------------------------------------------------
 
@@ -32,6 +41,7 @@ resource "aws_s3_bucket" "lpiot_bucket" {
 }
 
 resource "aws_s3_bucket_object" "static_www_index" {
+  count  = var.static_files_in_bucket
   bucket = aws_s3_bucket.lpiot_bucket.bucket
   key    = "index.html"
   source = "../resources/index.html"
@@ -39,6 +49,7 @@ resource "aws_s3_bucket_object" "static_www_index" {
 }
 
 resource "aws_s3_bucket_object" "static_www_error" {
+  count  = var.static_files_in_bucket
   bucket = aws_s3_bucket.lpiot_bucket.bucket
   key    = "error.html"
   source = "../resources/error.html"
