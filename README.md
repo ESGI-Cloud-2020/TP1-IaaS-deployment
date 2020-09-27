@@ -31,8 +31,9 @@ L'installation de `AWS cli` est lourde et lente.
 La doc est ici : https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html  
 Le travail est fait pour vous : tout a été packagé dans une image `Docker` que l'on va utiliser en mode interactif.
 
+
 ```shell
-docker container run -it --name monlab --volume $(pwd):/code thegaragebandofit:
+docker container run -it --name monlab --volume $(pwd):/code thegaragebandofit/labenv:1.0
 ```
 
 ```shell
