@@ -46,6 +46,7 @@ resource "aws_s3_bucket_object" "static_www_index" {
   key    = "index.html"
   source = "../resources/index.html"
   acl    = "public-read"
+  etag = filemd5("../resources/index.html")
 }
 
 resource "aws_s3_bucket_object" "static_www_error" {
@@ -54,5 +55,6 @@ resource "aws_s3_bucket_object" "static_www_error" {
   key    = "error.html"
   source = "../resources/error.html"
   acl    = "public-read"
+  etag = filemd5("../resources/error.html")
 }
 
