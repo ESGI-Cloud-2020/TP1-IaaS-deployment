@@ -93,8 +93,8 @@ resource "aws_instance" "dockercoins_rng" {
   }
 }
 
-output rng_external_ip {
-  description = "The external IP assigned to the EC2 instance named RNG"
+output rng_public_ip {
+  description = "The public IP address assigned to the EC2 instance named RNG"
   value       = aws_instance.dockercoins_rng.public_ip
 }
 
