@@ -1,0 +1,35 @@
+{
+    "variables": {
+        "ssh_user": "packer"
+    },
+    "sensitive-variables": ["GCP_service_account_JSON_file"],
+    "builders": [{
+        "type": "amazon-ebs",
+        "profile": "default",
+        "region": "us-east-1",
+        "shared_credentials_file": "/root/.aws/credentials",
+        "instance_type": "t2.micro",
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*",
+            "root-device-type": "ebs"
+          },
+          "owners": ["099720109477"],
+          "most_recent": true
+        },
+        "ami_description": "An image of a Ubuntu Focal server with docker daemon",
+        "ami_name": "esgi-docker-ubuntu-server-image",
+        "ssh_username": "ubuntu",
+        "ssh_interface": "public_ip",
+        "communicator": "ssh",
+        "iam_instance_profile": "lpiot-instance-profile"
+    }],
+    "provisioners": [{
+        "type": "shell",
+        "inline": [
+            "echo Connected via ssh at '{{build `User`}}@{{build `Host`}}:{{build `Port`}}'"
+        ],
+        "skip_clean": false
+    }]
+}
