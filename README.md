@@ -103,7 +103,7 @@ On copie les fichiers dans le _bucket_…
 ```shell
 root@d5129bd0f5a2:/code/resources/# aws s3 sync . s3://lpiot-test-7890/ --acl public-read
 upload: ./error.html to s3://lpiot-test-7890/error.html
-upload: ./test.txt to s3://lpiot-test-7890/test.txt
+upload: ./test.html to s3://lpiot-test-7890/test.html
 upload: ./index.html to s3://lpiot-test-7890/index.html
 ```
 
@@ -113,74 +113,82 @@ On a bien le résultat attendu.
 ```shell
 root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/index.html
 <html>
-  <head>
-    Content-Type: text/plain; charset=utf-8
-  </head>
   <body>
+    <pre>
     __  __________    __    ____     _       ______  ____  __    ____  __
    / / / / ____/ /   / /   / __ \   | |     / / __ \/ __ \/ /   / __ \/ /
   / /_/ / __/ / /   / /   / / / /   | | /| / / / / / /_/ / /   / / / / / 
  / __  / /___/ /___/ /___/ /_/ /    | |/ |/ / /_/ / _, _/ /___/ /_/ /_/  
 /_/ /_/_____/_____/_____/\____/     |__/|__/\____/_/ |_/_____/_____(_)   
+    </pre>
   </body>
 </html>
 
 root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/error.html
 <html>
-  <head>
-    Content-Type: text/plain; charset=utf-8
-  </head>
   <body>
+    <pre>
     _________  _________    __       __________  ____  ____  ____ 
    / ____/   |/_  __/   |  / /      / ____/ __ \/ __ \/ __ \/ __ \
   / /_  / /| | / / / /| | / /      / __/ / /_/ / /_/ / / / / /_/ /
  / __/ / ___ |/ / / ___ |/ /___   / /___/ _, _/ _, _/ /_/ / _, _/ 
 /_/   /_/  |_/_/ /_/  |_/_____/  /_____/_/ |_/_/ |_|\____/_/ |_|  
+    </pre>
   </body>
 </html>
 
-root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.html
+<html>
+  <body>
+    <pre>
   _______________________
  /_  __/ ____/ ___/_  __/
   / / / __/  \__ \ / /   
  / / / /___ ___/ // /    
 /_/ /_____//____//_/     
-
+    </pre>
+  </body>
+</html>
 ```
 
 Revoyons les ACL du fichier `test.txt`…
 
 ```shell
-root@d5129bd0f5a2:/code/resources/# aws s3 cp s3://lpiot-test-7890/test.txt s3://lpiot-test-7890/test2.txt
-copy: s3://lpiot-test-7890/test.txt to s3://lpiot-test-7890/test2.txt
+root@d5129bd0f5a2:/code/resources/# aws s3 cp s3://lpiot-test-7890/test.html s3://lpiot-test-7890/test2.html
+copy: s3://lpiot-test-7890/test.html to s3://lpiot-test-7890/test2.html
 ```
 
 Requêtons à nouveau nos fichiers…
 
 ```shell
-root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test2.txt
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test2.html
 <html>
-  <head>
-    Content-Type: text/plain; charset=utf-8
-  </head>
   <body>
+    <pre>
     _________  _________    __       __________  ____  ____  ____ 
    / ____/   |/_  __/   |  / /      / ____/ __ \/ __ \/ __ \/ __ \
   / /_  / /| | / / / /| | / /      / __/ / /_/ / /_/ / / / / /_/ /
  / __/ / ___ |/ / / ___ |/ /___   / /___/ _, _/ _, _/ /_/ / _, _/ 
 /_/   /_/  |_/_/ /_/  |_/_____/  /_____/_/ |_/_/ |_|\____/_/ |_|  
+    </pre>
   </body>
 </html>
 
-root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.txt
+root@d5129bd0f5a2:/code/resources/# curl http://lpiot-test-7890.s3-website.us-east-1.amazonaws.com/test.html
+<html>
+  <body>
+    <pre>
   _______________________
  /_  __/ ____/ ___/_  __/
   / / / __/  \__ \ / /   
  / / / /___ ___/ // /    
 /_/ /_____//____//_/     
+    </pre>
+  </body>
+</html>
 ```
 
-Le fichier `test2.txt` n'a pas hérité des _ACL_ du fichier source !
+Le fichier `test2.html` n'a pas hérité des _ACL_ du fichier source !
 
 
 1. Introduction à `Terraform`
@@ -196,5 +204,4 @@ IAM
 ### Introduction à Packer
 
 * Construction d'une _golden AMI_.
-
 
