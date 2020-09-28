@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "ssh_user": "packer"
+    },
+    "sensitive-variables": ["GCP_service_account_JSON_file"],
+    "builders": [{
+        "type": "amazon-ebs",
+        "profile": "default",
+        "region": "us-east-1",
+        "shared_credentials_file": "/root/.aws/credentials",
+        "instance_type": "t2.micro",
+        "source_ami_filter": {
+          "filters": {
+            "virtualization-type": "hvm",
+            "name": "ubuntu/images/*ubuntu-focal-20.04-amd64-server-*",
+            "root-device-type": "ebs"
+          },
+          "owners": ["099720109477"],
+          "most_recent": true
+        },
+        "ami_description": "An image of a Ubuntu Focal server with docker daemon",
+        "ami_name": "esgi-docker-ubuntu-server-image",
+        "ssh_username": "ubuntu",
+        "ssh_interface": "public_ip",
+        "communicator": "ssh",
+        "iam_instance_profile": "lpiot-instance-profile"
+    }],
+    "provisioners": [{
+        "type": "shell",
+        "execute_command": "echo '{{user `ssh_pass`}}' | {{ .Vars }} sudo -S -E sh '{{ .Path }}'",
+        "inline_shebang": "/bin/sh -x",
+        "inline": [
+            "apt-get update",
+            "apt-get upgrade --assume-yes",
+            "apt-get install --assume-yes curl git jq",
+            "apt-get install --assume-yes apt-transport-https ca-certificates curl gnupg-agent software-properties-common",
+            "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -",
+            "add-apt-repository 'deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable'",
+            "apt-get update",
+            "apt-get install --assume-yes docker-ce docker-ce-cli containerd.io",
+            "docker run hello-world"
+        ],
+        "skip_clean": false
+    }]
+}
